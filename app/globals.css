@@ -278,8 +278,8 @@ body {
 
 /* ── Reels ──────────────────────────────────────────────────────────── */
 .reels-container {
-  height: calc(100vh - var(--header-height));
   height: calc(100dvh - var(--header-height));
+  width: 100vw;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   background: #000;
@@ -287,13 +287,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  scrollbar-width: none;
 }
 
+.reels-container::-webkit-scrollbar { display: none; }
+
 .reel-slide {
-  height: calc(100vh - var(--header-height));
   height: calc(100dvh - var(--header-height));
-  width: 100%;
+  width: 100vw;
+  min-height: calc(100dvh - var(--header-height));
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
   display: flex;
   align-items: center;

@@ -42,7 +42,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
           <Navbar />
         </Suspense>
         <main className={isReels ? '' : 'page-container'}>{children}</main>
-        <Footer />
+        {!isReels && <Footer />}
       </div>
     </div>
   );
