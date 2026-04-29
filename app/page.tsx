@@ -82,9 +82,12 @@ export default async function HomePage({ searchParams }: HomeProps) {
                 ))}
               </div>
 
-
+              <div style={{ margin: '32px 0' }}>
+                <NativeBanner />
+              </div>
 
               <div className="video-grid">
+
                 {data.videos.slice(12).map(video => (
                   <VideoCard key={video.id} video={video} />
                 ))}
@@ -130,7 +133,9 @@ export default async function HomePage({ searchParams }: HomeProps) {
             </div>
           </div>
 
-
+          <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
+            <NativeBanner />
+          </div>
         </aside>
       </div>
     </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getVideoById, searchVideos, formatViews, formatDate } from '@/lib/api';
 import { Metadata } from 'next';
 import { trackVideoView } from '@/lib/analytics';
+import NativeBanner from '@/components/NativeBanner';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -43,7 +44,10 @@ export default async function VideoPage({ params }: Props) {
 
   return (
     <div>
-      {/* Top ad space removed */}
+      {/* Top Native Banner */}
+      <div className="page-layout" style={{ paddingBottom: 0 }}>
+        <NativeBanner />
+      </div>
 
       <div className="video-page-layout">
         {/* Left: Video + info */}
@@ -88,7 +92,9 @@ export default async function VideoPage({ params }: Props) {
             <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/ 5.00</span>
           </div>
 
-
+          <div style={{ margin: '24px 0' }}>
+            <NativeBanner />
+          </div>
 
           {/* Tags */}
           {tags.length > 0 && (
@@ -119,7 +125,9 @@ export default async function VideoPage({ params }: Props) {
 
         {/* Right: Related + Ads */}
         <aside>
-
+          <div style={{ marginBottom: '20px' }}>
+            <NativeBanner />
+          </div>
 
           <div style={{ marginBottom: 16 }}>
             <div className="section-header">
@@ -157,9 +165,12 @@ export default async function VideoPage({ params }: Props) {
             </div>
           </div>
 
-
+          <div style={{ marginTop: '20px' }}>
+            <NativeBanner />
+          </div>
         </aside>
       </div>
     </div>
+
   );
 }
