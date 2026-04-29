@@ -15,14 +15,14 @@ export default function VideoCard({ video }: Props) {
   const [previewIndex, setPreviewIndex] = useState(0);
   const previewTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const previewThumbs = video.thumbs.filter(t => t.size === 'medium');
+  const previewThumbs = video.thumbs.length > 0 ? video.thumbs : [];
   const mainThumb = video.default_thumb?.src || previewThumbs[0]?.src;
 
   const startPreview = useCallback(() => {
     if (previewThumbs.length <= 1) return;
     previewTimer.current = setInterval(() => {
       setPreviewIndex(prev => (prev + 1) % previewThumbs.length);
-    }, 800);
+    }, 600);
   }, [previewThumbs]);
 
   const stopPreview = useCallback(() => {
@@ -55,6 +55,7 @@ export default function VideoCard({ video }: Props) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="video-thumb"
             unoptimized
+            key={`${video.id}-${isHovered ? previewIndex : 'default'}`}
           />
         ) : (
           <div style={{
@@ -64,9 +65,6 @@ export default function VideoCard({ video }: Props) {
           }}>No Image</div>
         )}
 
-        <span className="video-badge" style={{ background: 'var(--accent-gradient)', color: '#000', fontWeight: 900 }}>
-          {parseFloat(video.rate) >= 4.5 ? 'PLATINUM' : 'HD'}
-        </span>
         <span className="video-duration">{formatDuration(video.length_sec)}</span>
 
         {isHovered && previewThumbs.length > 1 && (

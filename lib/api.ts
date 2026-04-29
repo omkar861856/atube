@@ -35,7 +35,7 @@ const EMPTY_RESPONSE: EpornerSearchResponse = {
 export async function searchVideos(params: SearchParams = {}): Promise<EpornerSearchResponse> {
   const {
     query = 'all',
-    per_page = 24,
+    per_page = 30,
     page = 1,
     thumbsize = 'big',
     order = 'latest',
@@ -90,7 +90,11 @@ export async function getVideoById(id: string): Promise<EpornerVideo | null> {
     const data = await res.json();
     // Empty result: API returns [] when video not found
     if (Array.isArray(data) || !data?.id) return null;
-    return data as EpornerVideo;
+    const video = data as EpornerVideo;
+    if (!video.embed) {
+      video.embed = `https://www.eporner.com/embed/${video.id}/`;
+    }
+    return video;
   } catch (err) {
     console.error('[Eporner] id fetch error:', err);
     return null;

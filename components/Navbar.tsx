@@ -20,28 +20,17 @@ export default function Navbar() {
   return (
     <header className="navbar-fixed">
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        {/* Desktop Collapse Toggle */}
-        <button 
-          className="nav-icon-btn desktop-only" 
-          onClick={toggleCollapsed}
-          title="Toggle Sidebar"
-          style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-primary)', padding: '8px' }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        </button>
-        
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="nav-icon-btn mobile-only" 
-          onClick={toggleOpen}
-          style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-primary)', padding: '8px' }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        </button>
-
-        <Link href="/" className="nav-logo" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '32px', height: '32px', background: 'var(--accent-gradient)', borderRadius: '6px' }} />
-          <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-1px' }}>ADULT<span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>TUBE</span></span>
+        <Link href="/" className="nav-logo" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ 
+            width: '36px', height: '36px', 
+            background: 'var(--accent-gradient)', 
+            borderRadius: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#000', fontWeight: 900, fontSize: '18px'
+          }}>A</div>
+          <span style={{ fontSize: '22px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-1.5px' }}>
+            ADULT<span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>TUBE</span>
+          </span>
         </Link>
       </div>
 
@@ -56,13 +45,13 @@ export default function Navbar() {
             placeholder="Search premium entertainment..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            style={{ paddingLeft: '48px', height: '48px', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }}
+            style={{ paddingLeft: '48px' }}
           />
         </form>
       </div>
 
       <div className="nav-actions">
-        <Link href="/reels" className="watch-reels-btn" style={{ background: 'none', border: '1px solid var(--border)', boxShadow: 'none' }}>
+        <Link href="/reels" className="watch-reels-btn">
           WATCH REELS
         </Link>
       </div>

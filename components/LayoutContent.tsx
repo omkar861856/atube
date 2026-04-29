@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useSidebar } from './SidebarContext';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
@@ -11,8 +12,8 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
   const [isHovered, setIsHovered] = useState(false);
 
   // Determine actual display state
-  // On desktop: if it's collapsed, it can expand on hover
   const displayCollapsed = isCollapsed && !isHovered;
+  const isReels = pathname === '/reels';
 
   return (
     <div className={`main-layout ${displayCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -40,7 +41,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Suspense>
           <Navbar />
         </Suspense>
-        <main className="page-container">{children}</main>
+        <main className={isReels ? '' : 'page-container'}>{children}</main>
         <Footer />
       </div>
     </div>

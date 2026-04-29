@@ -14,8 +14,6 @@ export default async function ReelsPage() {
   });
 
   return (
-    <div className="reels-container">
-      <ReelClient videos={data.videos} />
-    </div>
+    <ReelClient videos={data.videos} />
   );
 }

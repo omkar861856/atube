@@ -15,15 +15,28 @@ const navItems = [
 
 export default function Sidebar({ forceFull }: { forceFull?: boolean }) {
   const pathname = usePathname();
-  const { isOpen, isCollapsed, closeMobile } = useSidebar();
+  const { isOpen, isCollapsed, toggleCollapsed, closeMobile } = useSidebar();
 
   const isActuallyCollapsed = isCollapsed && !forceFull;
 
   return (
     <aside className={`sidebar-fixed ${isActuallyCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`} style={{ borderRight: '1px solid var(--border)' }}>
-      <Link href="/" className="sidebar-logo" onClick={closeMobile} style={{ padding: '0 24px', justifyContent: 'flex-start' }}>
-        <div style={{ width: '32px', height: '32px', background: 'var(--accent-gradient)', borderRadius: '6px' }} />
-      </Link>
+      <div style={{ padding: '24px 12px', display: 'flex', justifyContent: isActuallyCollapsed ? 'center' : 'flex-end' }}>
+        <button 
+          onClick={toggleCollapsed}
+          style={{ 
+            background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', 
+            color: 'var(--text-primary)', cursor: 'pointer', borderRadius: '50%',
+            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}
+        >
+          {isActuallyCollapsed ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6"/></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6"/></svg>
+          )}
+        </button>
+      </div>
       
       <nav className="sidebar-nav">
         {navItems.map((item) => {

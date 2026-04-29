@@ -73,7 +73,7 @@ export default function ReelClient({ videos }: Props) {
 
     return (
       <section key={video.id} className="reel-slide" data-index={index}>
-        <div className="reel-video-wrapper">
+        <div className="reel-video-wrapper" style={{ height: 'calc(100vh - var(--header-height))' }}>
           <iframe
             src={`https://www.eporner.com/embed/${video.id}/?autoplay=${(autoplay && activeIndex === index) ? 1 : 0}&muted=${isMuted ? 1 : 0}`}
             className="reel-video"
