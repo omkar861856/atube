@@ -3,6 +3,7 @@ import "./globals.css";
 import AgeGate from "@/components/AgeGate";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FeedbackBot from "@/components/FeedbackBot";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default function RootLayout({
         </Suspense>
         <main>{children}</main>
         <Footer />
+        <FeedbackBot />
       </body>
     </html>
   );

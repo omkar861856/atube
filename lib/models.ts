@@ -64,3 +64,28 @@ function getModel<T extends Document>(name: string, schema: Schema): Model<T> {
 export const PageView = () => getModel<IPageView>('PageView', PageViewSchema);
 export const SearchEvent = () => getModel<ISearchEvent>('SearchEvent', SearchEventSchema);
 export const VideoView = () => getModel<IVideoView>('VideoView', VideoViewSchema);
+
+// ── Feedback ──────────────────────────────────────────────────────────────
+export interface IFeedback extends Document {
+  type: 'bug' | 'suggestion' | 'content' | 'other';
+  message: string;
+  contact?: string;      // optional email/name
+  page?: string;         // URL where feedback was submitted
+  userAgent?: string;
+  status: 'open' | 'reviewed' | 'resolved';
+  createdAt: Date;
+}
+
+const FeedbackSchema = new Schema<IFeedback>(
+  {
+    type: { type: String, enum: ['bug', 'suggestion', 'content', 'other'], required: true, index: true },
+    message: { type: String, required: true },
+    contact: String,
+    page: String,
+    userAgent: String,
+    status: { type: String, enum: ['open', 'reviewed', 'resolved'], default: 'open', index: true },
+  },
+  { timestamps: { createdAt: true, updatedAt: false } }
+);
+
+export const Feedback = () => getModel<IFeedback>('Feedback', FeedbackSchema);
