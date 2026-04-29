@@ -53,7 +53,7 @@ export default function Pagination({ currentPage, totalPages }: Props) {
           <Link
             key={p}
             href={buildHref(p as number)}
-            className={`page-btn ${p === currentPage ? 'active' : ''}`}
+            className={p === currentPage ? 'page-btn active' : 'page-btn'}
             id={`pagination-page-${p}`}
           >
             {p}

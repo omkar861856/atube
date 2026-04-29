@@ -308,11 +308,54 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s;
 }
 
-.video-card:hover .video-thumb-wrap img {
-  transform: scale(1.05);
+/* Preview flip-book progress bar */
+.preview-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  display: flex;
+  gap: 2px;
+  padding: 0 4px;
+  z-index: 2;
+  background: rgba(0,0,0,0.5);
+}
+
+.preview-bar-segment {
+  flex: 1;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: opacity 0.15s;
+}
+
+/* Play icon shown during preview */
+.preview-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(232, 20, 90, 0.85);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: 0 0 20px rgba(232,20,90,0.6);
+  animation: pulse-play 1s ease-in-out infinite;
+}
+
+@keyframes pulse-play {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
 .video-duration {
