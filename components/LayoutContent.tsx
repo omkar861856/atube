@@ -11,7 +11,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
   const { isOpen, isCollapsed, toggleCollapsed, closeMobile } = useSidebar();
   const [isHovered, setIsHovered] = useState(false);
 
-  // Determine actual display state
+  const pathname = usePathname();
   const displayCollapsed = isCollapsed && !isHovered;
   const isReels = pathname === '/reels';
 
