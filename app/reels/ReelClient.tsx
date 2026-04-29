@@ -120,7 +120,7 @@ export default function ReelClient({ videos }: Props) {
           </div>
 
           {/* Navigation Arrows - Moved to be more prominent */}
-          <div className="reel-nav-controls" style={{ z-index: 1000 }}>
+          <div className="reel-nav-controls" style={{ zIndex: 1000 }}>
             {index > 0 && (
               <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)} style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid #fff' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m18 15-6-6-6 6"/></svg>
