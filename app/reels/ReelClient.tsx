@@ -75,6 +75,7 @@ export default function ReelClient({ videos }: Props) {
       <section key={video.id} className="reel-slide" data-index={index}>
         <div className="reel-video-wrapper" style={{ height: 'calc(100vh - var(--header-height))' }}>
           <iframe
+            key={`reel-${video.id}-${isMuted ? 'muted' : 'unmuted'}-${activeIndex === index ? 'active' : 'inactive'}`}
             src={`https://www.eporner.com/embed/${video.id}/?autoplay=${(autoplay && activeIndex === index) ? 1 : 0}&muted=${isMuted ? 1 : 0}`}
             className="reel-video"
             allow="autoplay; fullscreen"
@@ -91,7 +92,7 @@ export default function ReelClient({ videos }: Props) {
             </div>
           </div>
 
-          <div className="reel-side-actions">
+          <div className="reel-side-actions" style={{ zIndex: 1000 }}>
             <div className="reel-action-btn" onClick={() => setIsMuted(!isMuted)}>
               <span style={{ fontSize: '20px', display: 'flex' }}>
                 {isMuted ? (
@@ -118,16 +119,16 @@ export default function ReelClient({ videos }: Props) {
             </Link>
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="reel-nav-controls">
+          {/* Navigation Arrows - Moved to be more prominent */}
+          <div className="reel-nav-controls" style={{ z-index: 1000 }}>
             {index > 0 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m18 15-6-6-6 6"/></svg>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)} style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid #fff' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m18 15-6-6-6 6"/></svg>
               </button>
             )}
             {index < videos.length - 1 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)} style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid #fff' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m6 9 6 6 6-6"/></svg>
               </button>
             )}
           </div>

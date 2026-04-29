@@ -41,9 +41,6 @@ export default function VideoPlayer({ video }: Props) {
   return (
     <div 
       className="video-player-container"
-      onMouseLeave={() => {
-        if (hasInteracted) setShowAd(true);
-      }}
       style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#000', borderRadius: '16px', overflow: 'hidden' }}
     >
       <iframe
@@ -58,22 +55,6 @@ export default function VideoPlayer({ video }: Props) {
         loading="lazy"
         style={{ border: 'none' }}
       />
-
-      {showAd && (
-        <div className="pause-ad-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAd(false); }}>
-          <div className="pause-ad-content" style={{ maxWidth: '360px' }}>
-            <button 
-              onClick={() => setShowAd(false)}
-              style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer' }}
-            >
-              ×
-            </button>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '15px' }}>ADVERTISEMENT</div>
-            <NativeBanner id="2020499" />
-            <p style={{ fontSize: '12px', marginTop: '15px', color: 'var(--text-secondary)' }}>Click to resume video</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
