@@ -5,6 +5,7 @@ import { getVideoById, searchVideos, formatViews, formatDate } from '@/lib/api';
 import { Metadata } from 'next';
 import { trackVideoView } from '@/lib/analytics';
 import NativeBanner from '@/components/NativeBanner';
+import VideoPlayer from '@/components/VideoPlayer';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -53,16 +54,7 @@ export default async function VideoPage({ params }: Props) {
         {/* Left: Video + info */}
         <div>
           {/* Player */}
-          <div className="video-player-wrap">
-            <iframe
-              id="video-player"
-              src={video.embed}
-              allowFullScreen
-              scrolling="no"
-              allow="autoplay; fullscreen"
-              title={video.title}
-            />
-          </div>
+          <VideoPlayer video={{ embed: video.embed, title: video.title }} />
 
           {/* Title */}
           <h1 className="video-detail-title">{video.title}</h1>
@@ -92,8 +84,38 @@ export default async function VideoPage({ params }: Props) {
             <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/ 5.00</span>
           </div>
 
+          {/* Download Section */}
+          <div className="download-section">
+            <div className="download-header">
+              <div style={{ background: 'var(--accent)', padding: '6px', borderRadius: '8px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                </svg>
+              </div>
+              <h3>Download Video</h3>
+            </div>
+            
+            <div className="download-instruction">
+              <strong>Instructions:</strong> Right-click on the video player above and select <strong>"Copy video URL"</strong>, then click the download button below and paste the link in the downloader.
+            </div>
+
+            <div className="download-btn-wrap">
+              <a 
+                href="https://metube.ecotron.co.in/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="download-btn"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
+                </svg>
+                Go to Download Platform
+              </a>
+            </div>
+          </div>
+
           <div style={{ margin: '24px 0' }}>
-            <NativeBanner />
+            <NativeBanner id="2020499" />
           </div>
 
           {/* Tags */}
@@ -126,7 +148,7 @@ export default async function VideoPage({ params }: Props) {
         {/* Right: Related + Ads */}
         <aside>
           <div style={{ marginBottom: '20px' }}>
-            <NativeBanner />
+            <NativeBanner id="2020499" />
           </div>
 
           <div style={{ marginBottom: 16 }}>
@@ -154,6 +176,21 @@ export default async function VideoPage({ params }: Props) {
                         background: 'rgba(0,0,0,0.8)', color: '#fff',
                         fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3
                       }}>{rv.length_min}</span>
+                      
+                      {/* Quick Download */}
+                      <button
+                        className="card-download-btn"
+                        style={{ width: 24, height: 24, top: 4, right: 4, opacity: 1, transform: 'scale(1)', border: 'none', cursor: 'pointer' }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          window.open('https://metube.ecotron.co.in/', '_blank');
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                        </svg>
+                      </button>
                     </div>
                     <div className="related-info">
                       <p className="related-title">{rv.title}</p>

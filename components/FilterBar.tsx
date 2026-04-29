@@ -10,13 +10,11 @@ const CATEGORIES = [
 ];
 
 const SORT_OPTIONS: { label: string; value: SortOrder }[] = [
-  { label: 'Latest', value: 'latest' },
-  { label: 'Most Popular', value: 'most-popular' },
-  { label: 'Top Weekly', value: 'top-weekly' },
-  { label: 'Top Monthly', value: 'top-monthly' },
-  { label: 'Top Rated', value: 'top-rated' },
-  { label: 'Longest', value: 'longest' },
-  { label: 'Shortest', value: 'shortest' },
+  { label: '🆕 Latest', value: 'latest' },
+  { label: '🔥 Trending', value: 'top-weekly' },
+  { label: '💎 Popular', value: 'most-popular' },
+  { label: '⭐ Top Rated', value: 'top-rated' },
+  { label: '⏱️ Longest', value: 'longest' },
 ];
 
 export default function FilterBar() {
@@ -29,37 +27,30 @@ export default function FilterBar() {
   function setParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     params.set(key, value);
-    params.delete('page'); // reset to page 1
+    params.delete('page');
     router.push(`/?${params.toString()}`);
   }
 
   return (
-    <div>
-      {/* Category chips */}
-      <div className="categories-grid">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat}
-            id={`cat-${cat.replace(/\s+/g, '-')}`}
-            className={`category-chip ${currentCat === cat ? 'active' : ''}`}
-            onClick={() => setParam('cat', cat)}
-          >
-            {cat === 'all' ? '🔥 All' : cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Sort bar */}
-      <div className="sort-bar">
-        <span className="sort-label">Sort by:</span>
+    <div style={{ marginBottom: '32px' }}>
+      <div className="category-bar">
         {SORT_OPTIONS.map(opt => (
           <button
             key={opt.value}
-            id={`sort-${opt.value}`}
-            className={`sort-btn ${currentOrder === opt.value ? 'active' : ''}`}
+            className={`category-tag ${currentOrder === opt.value ? 'active' : ''}`}
             onClick={() => setParam('order', opt.value)}
           >
             {opt.label}
+          </button>
+        ))}
+        <div style={{ width: '1px', height: '24px', background: 'var(--border)', margin: '0 8px', flexShrink: 0 }} />
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            className={`category-tag ${currentCat === cat ? 'active' : ''}`}
+            onClick={() => setParam('cat', cat)}
+          >
+            {cat}
           </button>
         ))}
       </div>

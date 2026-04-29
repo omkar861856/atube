@@ -14,11 +14,22 @@ declare global {
 
 async function connectDB(): Promise<typeof mongoose> {
   if (global._mongooseConn) {
+    console.log('Using cached MongoDB connection');
     return global._mongooseConn;
   }
+  
+  console.log('Connecting to MongoDB...');
   global._mongooseConn = mongoose.connect(MONGODB_URI, {
     bufferCommands: false,
+  }).then((m) => {
+    console.log('MongoDB Connected successfully');
+    return m;
+  }).catch((err) => {
+    console.error('MongoDB connection error:', err);
+    global._mongooseConn = undefined;
+    throw err;
   });
+
   return global._mongooseConn;
 }
 

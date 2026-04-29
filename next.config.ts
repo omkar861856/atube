@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "static-ca-cdn.eporner.com",
+        hostname: "*.eporner.com",
         pathname: "/**",
       },
     ],

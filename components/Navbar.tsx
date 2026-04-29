@@ -21,34 +21,31 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        <Link href="/" className="logo">
-          <div className="logo-icon">🔥</div>
-          <span className="logo-text">AdultTube</span>
-          <span className="logo-badge">18+</span>
-        </Link>
+        <div className="nav-search-container">
+          <form className="search-bar" onSubmit={handleSearch}>
+            <div className="search-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Search for premium adult content..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              autoComplete="off"
+            />
+          </form>
+        </div>
 
-        <form className="search-bar" onSubmit={handleSearch}>
-          <input
-            id="search-input"
-            type="search"
-            placeholder="Search videos..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            autoComplete="off"
-          />
-          <button type="submit" className="search-btn" aria-label="Search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+        <div className="nav-actions">
+          <Link href="/reels" className="category-tag active" style={{ padding: '8px 16px', fontSize: '13px' }}>
+            ✨ Watch Reels
+          </Link>
+          <button className="category-tag" style={{ border: 'none', background: 'var(--bg-hover)' }}>
+            Sign In
           </button>
-        </form>
-
-        <div className="nav-links">
-          <Link href="/" className="nav-link">Home</Link>
-          <Link href="/?order=top-weekly" className="nav-link">Trending</Link>
-          <Link href="/?order=most-popular" className="nav-link">Popular</Link>
-          <Link href="/?order=top-rated" className="nav-link">Top Rated</Link>
-          <Link href="/?order=longest" className="nav-link">Long Videos</Link>
         </div>
       </div>
     </nav>

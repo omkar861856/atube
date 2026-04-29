@@ -1,21 +1,24 @@
-'use client';
-
-import Script from 'next/script';
+interface Props {
+  id?: string;
+}
 
 /**
- * Native Banner ad for atube.vercel.app
+ * Native Banner ad
  * Place anywhere in the page body — renders a native ad widget.
  */
-export default function NativeBanner() {
+export default function NativeBanner({ id = "2020498" }: Props) {
   return (
-    <div style={{ width: '100%', minHeight: 60 }}>
-      <Script
-        async
-        data-cfasync="false"
-        src="https://developdomicile.com/4f617d7e65fa02a2b621f9487d1e16be/invoke.js"
-        strategy="lazyOnload"
-      />
-      <div id="container-4f617d7e65fa02a2b621f9487d1e16be" />
+    <div 
+      className="ad-container" 
+      style={{ 
+        width: '100%', 
+        minHeight: 100, 
+        display: 'flex', 
+        justifyContent: 'center',
+        margin: '10px 0'
+      }}
+    >
+      <div data-banner-id={id}></div>
     </div>
   );
 }

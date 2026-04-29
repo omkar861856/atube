@@ -23,30 +23,36 @@ export default function AgeGate() {
 
   return (
     <div className="age-gate-overlay" role="dialog" aria-modal="true" aria-label="Age Verification">
-      <div className="age-gate-modal">
-        <div className="age-gate-logo">🔞</div>
-        <div className="age-gate-site">AdultTube</div>
+      <div className="age-gate-content">
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>🔥</div>
+        <h1 className="age-gate-title">AdultTube</h1>
 
-        <p className="age-gate-warning">
-          This website contains <strong>explicit adult content</strong> intended for adults only.
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '18px', fontWeight: 600 }}>
+          Adult Content Ahead
         </p>
-        <p className="age-gate-legal">
-          By entering you confirm that you are <strong>18 years of age or older</strong>, and that you agree to our
-          Terms of Service. If you are under 18, please leave immediately.
+        
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6, marginBottom: '32px' }}>
+          This platform contains explicit adult entertainment. By entering, you certify that you are at least <strong>18 years of age</strong> and have the legal right to view such material in your jurisdiction.
         </p>
 
-        <div className="age-gate-btns">
-          <button id="age-gate-enter" className="btn-primary" onClick={handleEnter}>
-            I am 18+ — Enter
-          </button>
-          <button id="age-gate-leave" className="btn-secondary" onClick={handleLeave}>
-            Leave
-          </button>
-        </div>
+        <button id="age-gate-enter" className="btn-confirm" onClick={handleEnter}>
+          I am 18 or older - Enter
+        </button>
+        
+        <button 
+          id="age-gate-leave" 
+          onClick={handleLeave}
+          style={{ 
+            background: 'none', border: 'none', color: 'var(--text-muted)', 
+            marginTop: '24px', cursor: 'pointer', fontWeight: 600, fontSize: '14px',
+            textDecoration: 'underline'
+          }}
+        >
+          Exit Website
+        </button>
 
-        <div className="rta-badge">
-          <span>🛡️</span>
-          <span>RTA Labeled — Parental Controls Compatible</span>
+        <div style={{ marginTop: '40px', opacity: 0.3, fontSize: '10px', letterSpacing: '1px', textTransform: 'uppercase' }}>
+          Restricted To Adults • RTA-5042
         </div>
       </div>
     </div>
