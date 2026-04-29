@@ -12,35 +12,47 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const video = await getVideoById(id);
-  if (!video) return { title: 'Video Not Found — AdultTube' };
-  return {
-    title: `${video.title} — AdultTube`,
-    description: `Watch ${video.title}. ${formatDuration(video.length_sec)} long. ${formatViews(video.views)} views. Rated ${video.rate}/5.`,
-    robots: { index: false, follow: false },
-  };
+  try {
+    const { id } = await params;
+    const video = await getVideoById(id);
+    if (!video) return { title: 'Video Not Found' };
+    return {
+      title: `${video.title} — AdultTube`,
+      description: `Watch ${video.title} on premium silver theme.`,
+    };
+  } catch {
+    return { title: 'AdultTube — Premium Entertainment' };
+  }
 }
 
 export default async function VideoPage({ params }: Props) {
-  const { id } = await params;
+  let id = '';
+  try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+  } catch (err) {
+    console.error('Params resolution error:', err);
+    notFound();
+  }
   
-  let video = null;
-  let relatedVideos = [];
+  let video: any = null;
+  let relatedVideos: any[] = [];
 
   try {
     const [videoData, relatedData] = await Promise.all([
-      getVideoById(id),
-      searchVideos({ query: 'all', per_page: 12, order: 'top-weekly', thumbsize: 'big' }),
+      getVideoById(id).catch(() => null),
+      searchVideos({ query: 'all', per_page: 12, order: 'top-weekly' }).catch(() => ({ videos: [] })),
     ]);
     
     video = videoData;
-    relatedVideos = (relatedData?.videos || []).filter(v => v.id !== id).slice(0, 10);
+    relatedVideos = (relatedData?.videos || []).filter((v: any) => v.id !== id).slice(0, 10);
   } catch (err) {
-    console.error('[VideoPage] Data fetch error:', err);
+    console.error('[VideoPage] Critical fetch error:', err);
   }
 
-  if (!video) notFound();
+  if (!video) {
+    notFound();
+  }
 
   const ratingPercent = (parseFloat(video.rate) / 5) * 100;
   const tags = (video.keywords || '')
