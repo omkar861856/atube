@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getVideoById, searchVideos, formatViews, formatDate, formatDuration } from '@/lib/api';
 import { Metadata } from 'next';
-import { trackVideoView } from '@/lib/analytics';
 import NativeBanner from '@/components/NativeBanner';
 import VideoPlayer from '@/components/VideoPlayer';
 
@@ -18,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!video) return { title: 'Video Not Found' };
     return {
       title: `${video.title} — AdultTube`,
-      description: `Watch ${video.title} on premium silver theme.`,
+      description: `Watch ${video.title} in high quality. ${formatDuration(video.length_sec)} long.`,
     };
   } catch {
     return { title: 'AdultTube — Premium Entertainment' };
@@ -26,15 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function VideoPage({ params }: Props) {
-  let id = '';
-  try {
-    const resolvedParams = await params;
-    id = resolvedParams.id;
-  } catch (err) {
-    console.error('Params resolution error:', err);
-    notFound();
-  }
+  const { id } = await params;
   
+  // Defensive Data Fetching
   let video: any = null;
   let relatedVideos: any[] = [];
 
@@ -57,175 +50,152 @@ export default async function VideoPage({ params }: Props) {
   const ratingPercent = (parseFloat(video.rate) / 5) * 100;
   const tags = (video.keywords || '')
     .split(',')
-    .map(t => t.trim())
+    .map((t: string) => t.trim())
     .filter(Boolean)
     .slice(0, 20);
 
   return (
-    <div>
-      {/* Top Native Banner */}
-      <div className="page-layout" style={{ paddingBottom: 0 }}>
+    <div className="video-detail-root">
+      {/* Top Ad */}
+      <div className="page-container" style={{ paddingBottom: 0 }}>
         <NativeBanner />
       </div>
 
-      <div className="video-page-layout">
-        {/* Left: Video + info */}
-        <div>
-          {/* Player */}
-          <VideoPlayer video={{ id: video.id, embed: video.embed, title: video.title }} />
-
-          {/* Title */}
-          <h1 className="video-detail-title">{video.title}</h1>
-
-          {/* Meta */}
-          <div className="video-detail-meta">
-            <span className="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              {formatViews(video.views)} views
-            </span>
-            <span className="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-              {formatDuration(video.length_sec)}
-            </span>
-            <span className="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-              {formatDate(video.added)}
-            </span>
+      <div className="video-detail-container">
+        {/* Main Content Area */}
+        <div className="video-detail-main">
+          {/* Player Section */}
+          <div className="video-player-section">
+            <VideoPlayer video={{ id: video.id, embed: video.embed, title: video.title }} />
           </div>
 
-          {/* Rating */}
-          <div className="rating-bar-wrap">
-            <span style={{ fontSize: 13, color: '#ffd700', fontWeight: 700 }}>★ {parseFloat(video.rate).toFixed(2)}</span>
-            <div className="rating-bar">
-              <div className="rating-bar-fill" style={{ width: `${ratingPercent}%` }} />
-            </div>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/ 5.00</span>
-          </div>
-
-          {/* Download Section */}
-          <div className="download-section">
-            <div className="download-header">
-              <div style={{ background: 'var(--accent)', padding: '6px', borderRadius: '8px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-                </svg>
+          {/* Info Section */}
+          <div className="video-info-section">
+            <div className="video-info-header">
+              <h1 className="video-info-title">{video.title}</h1>
+              
+              <div className="video-info-stats">
+                <div className="stat-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  {formatViews(video.views)}
+                </div>
+                <div className="stat-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {formatDuration(video.length_sec)}
+                </div>
+                <div className="stat-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                  {formatDate(video.added)}
+                </div>
+                <div className="stat-pill accent">
+                  ★ {parseFloat(video.rate).toFixed(1)}
+                </div>
               </div>
-              <h3>Download Video</h3>
-            </div>
-            
-            <div className="download-instruction">
-              <strong>Instructions:</strong> Right-click on the video player above and select <strong>"Copy video URL"</strong>, then click the download button below and paste the link in the downloader.
             </div>
 
-            <div className="download-btn-wrap">
+            {/* Rating Bar */}
+            <div className="rating-container">
+              <div className="rating-track">
+                <div className="rating-fill" style={{ width: `${ratingPercent}%` }} />
+              </div>
+              <span className="rating-text">{ratingPercent.toFixed(0)}% Satisfaction</span>
+            </div>
+
+            {/* Download Card */}
+            <div className="premium-card download-card">
+              <div className="card-header">
+                <div className="icon-circle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                </div>
+                <div>
+                  <h3 className="card-title">Download in 4K Quality</h3>
+                  <p className="card-subtitle">Fast, secure, and permanent offline access</p>
+                </div>
+              </div>
+              
+              <div className="download-instruction-box">
+                <p>Right-click video player → Select <strong>"Copy video URL"</strong> → Paste in the downloader.</p>
+              </div>
+
               <a 
                 href="https://metube.ecotron.co.in/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="download-btn"
+                className="premium-btn-action"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/>
-                </svg>
-                Go to Download Platform
+                OPEN DOWNLOADER
+              </a>
+            </div>
+
+            <div style={{ margin: '32px 0' }}>
+              <NativeBanner id="2020499" />
+            </div>
+
+            {/* Tags Cloud */}
+            {tags.length > 0 && (
+              <div className="video-tags-container">
+                <h4 className="tags-label">Categorized in</h4>
+                <div className="tag-cloud">
+                  {tags.map(tag => (
+                    <Link key={tag} href={`/?cat=${encodeURIComponent(tag)}`} className="tag-pill">
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Source Info */}
+            <div className="source-footer">
+              <a href={video.url} target="_blank" rel="noopener noreferrer">
+                Source: Eporner.com External Provider
               </a>
             </div>
           </div>
-
-          <div style={{ margin: '24px 0' }}>
-            <NativeBanner id="2020499" />
-          </div>
-
-          {/* Tags */}
-          {tags.length > 0 && (
-            <div className="tags-section">
-              <h4>Tags</h4>
-              <div className="tag-cloud">
-                {tags.map(tag => (
-                  <Link key={tag} href={`/?cat=${encodeURIComponent(tag)}`} className="tag">
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Source link */}
-          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
-            <a
-              href={video.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none' }}
-            >
-              View on Eporner.com →
-            </a>
-          </div>
         </div>
 
-        {/* Right: Related + Ads */}
-        <aside>
-          <div style={{ marginBottom: '20px' }}>
+        {/* Sidebar Related Area */}
+        <aside className="video-detail-sidebar">
+          <div className="sidebar-ad">
             <NativeBanner id="2020499" />
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <div className="section-header">
-              <h2 className="section-title" style={{ fontSize: 16 }}>Related Videos</h2>
-            </div>
-            <div className="related-grid">
-              {relatedVideos.map(rv => {
-                const thumb = rv.default_thumb?.src || rv.thumbs?.[0]?.src;
-                return (
-                  <Link key={rv.id} href={`/video/${rv.id}`} className="related-card">
-                    <div className="related-thumb">
-                      {thumb && (
-                        <Image
-                          src={thumb}
-                          alt={rv.title}
-                          fill
-                          sizes="120px"
-                          style={{ objectFit: 'cover' }}
-                          unoptimized
-                        />
-                      )}
-                      <span style={{
-                        position: 'absolute', bottom: 4, right: 4,
-                        background: 'rgba(0,0,0,0.8)', color: '#fff',
-                        fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3
-                      }}>{formatDuration(rv.length_sec)}</span>
-                      
-                      {/* Quick Download */}
-                      <button
-                        className="card-download-btn"
-                        style={{ width: 24, height: 24, top: 4, right: 4, opacity: 1, transform: 'scale(1)', border: 'none', cursor: 'pointer' }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          window.open('https://metube.ecotron.co.in/', '_blank');
-                        }}
-                      >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-                        </svg>
-                      </button>
+          <h2 className="sidebar-title">Discover More</h2>
+          
+          <div className="related-list">
+            {relatedVideos.map(rv => {
+              const thumb = rv.default_thumb?.src || rv.thumbs?.[0]?.src;
+              return (
+                <Link key={rv.id} href={`/video/${rv.id}`} className="related-item">
+                  <div className="related-item-thumb">
+                    {thumb && (
+                      <Image
+                        src={thumb}
+                        alt={rv.title}
+                        fill
+                        sizes="160px"
+                        className="thumb-img"
+                        unoptimized
+                      />
+                    )}
+                    <span className="related-duration">{formatDuration(rv.length_sec)}</span>
+                  </div>
+                  <div className="related-item-info">
+                    <h5 className="related-item-title">{rv.title}</h5>
+                    <div className="related-item-meta">
+                      {formatViews(rv.views)} views • ★ {parseFloat(rv.rate).toFixed(1)}
                     </div>
-                    <div className="related-info">
-                      <p className="related-title">{rv.title}</p>
-                      <p className="related-meta">{formatViews(rv.views)} views · ★ {parseFloat(rv.rate).toFixed(1)}</p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
 
-          <div style={{ marginTop: '20px' }}>
+          <div className="sidebar-ad" style={{ marginTop: '32px' }}>
             <NativeBanner />
           </div>
         </aside>
       </div>
     </div>
-
   );
 }

@@ -73,7 +73,8 @@ export default function ReelClient({ videos }: Props) {
 
     return (
       <section key={video.id} className="reel-slide" data-index={index}>
-        <div className="reel-video-wrapper" style={{ height: 'calc(100vh - var(--header-height))' }}>
+        <div className="reel-video-wrapper">
+          {/* SAFE ZONE: Important content is centered. Top 250px and bottom 450px avoided for critical UI */}
           <iframe
             key={`reel-${video.id}-${isMuted ? 'muted' : 'unmuted'}-${activeIndex === index ? 'active' : 'inactive'}`}
             src={`https://www.eporner.com/embed/${video.id}/?autoplay=${(autoplay && activeIndex === index) ? 1 : 0}&muted=${isMuted ? 1 : 0}`}
@@ -85,56 +86,58 @@ export default function ReelClient({ videos }: Props) {
           
           <div className="reel-overlay">
             <div className="reel-info">
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{video.title}</h3>
-              <p style={{ margin: '6px 0 0', opacity: 0.9, fontSize: '0.85rem' }}>
+              {/* SAFE ZONE: Title is at least 450px from bottom */}
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, textShadow: '0 2px 10px rgba(0,0,0,0.8)', letterSpacing: '-0.5px' }}>{video.title}</h3>
+              <p style={{ margin: '8px 0 0', opacity: 0.9, fontSize: '0.9rem', fontWeight: 600 }}>
                 🔥 {video.views.toLocaleString()} • ⭐ {video.rate}
               </p>
             </div>
           </div>
 
-          <div className="reel-side-actions" style={{ zIndex: 1000 }}>
+          <div className="reel-side-actions">
+            {/* SAFE ZONE: Action buttons are at least 480px from bottom */}
             <div className="reel-action-btn" onClick={() => setIsMuted(!isMuted)}>
-              <span style={{ fontSize: '20px', display: 'flex' }}>
+              <span style={{ fontSize: '24px', display: 'flex' }}>
                 {isMuted ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5 6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 5 6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/></svg>
                 ) : (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                 )}
               </span>
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>{isMuted ? 'MUTED' : 'SOUND'}</span>
+              <span style={{ fontSize: '10px', fontWeight: 800 }}>{isMuted ? 'OFF' : 'ON'}</span>
             </div>
             
             <div className="reel-action-btn" onClick={() => setAutoplay(!autoplay)}>
-              <span style={{ fontSize: '20px', display: 'flex' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              <span style={{ fontSize: '24px', display: 'flex' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
               </span>
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>AUTO</span>
+              <span style={{ fontSize: '10px', fontWeight: 800 }}>{autoplay ? 'AUTO' : 'MANUAL'}</span>
             </div>
 
             <Link href={`/video/${video.id}`} className="reel-action-btn" style={{ textDecoration: 'none' }}>
-              <span style={{ fontSize: '20px', display: 'flex' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 12-8.5 6V6Z"/><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="22" y1="7" y2="7"/><line x1="2" x2="22" y1="17" y2="17"/></svg>
+              <span style={{ fontSize: '24px', display: 'flex' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect width="20" height="20" x="2" y="2" rx="2"/><path d="m15 12-8.5 6V6Z"/></svg>
               </span>
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>FULL</span>
+              <span style={{ fontSize: '10px', fontWeight: 800 }}>FULL</span>
             </Link>
           </div>
 
           {/* Navigation Arrows - Moved to be more prominent */}
-          <div className="reel-nav-controls" style={{ zIndex: 1000 }}>
+          <div className="reel-nav-controls">
             {index > 0 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)} style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid #fff' }}>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m18 15-6-6-6 6"/></svg>
               </button>
             )}
             {index < videos.length - 1 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)} style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid #fff' }}>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m6 9 6 6 6-6"/></svg>
               </button>
             )}
           </div>
           
           <button className="reel-fullscreen-btn" onClick={toggleFullscreen}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
           </button>
         </div>
       </section>
