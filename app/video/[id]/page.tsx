@@ -53,8 +53,6 @@ export default async function VideoPage({ params }: Props) {
     .filter(Boolean)
     .slice(0, 20);
 
-  const relatedVideos = related.videos.filter(v => v.id !== video.id).slice(0, 10);
-
   return (
     <div>
       {/* Top Native Banner */}
