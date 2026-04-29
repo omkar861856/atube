@@ -16,11 +16,34 @@ export const metadata: Metadata = {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
     shortcut: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
   },
+  openGraph: {
+    title: "AdultTube — Free HD Porn Videos",
+    description: "Watch thousands of free HD adult videos in 4K quality.",
+    url: "https://atube.vercel.app",
+    siteName: "AdultTube",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AdultTube Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AdultTube — Free HD Porn Videos",
+    description: "Watch thousands of free HD adult videos in 4K quality.",
+    images: ["/og-image.png"],
+  },
   other: {
     rating: "adult",
     "RTA-label": "RTA-5042-1996-1400-1577-RTA",
   },
 };
+
 
 export default function RootLayout({
   children,
