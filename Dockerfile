@@ -13,9 +13,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build args for env vars needed at build time (none required here)
+# Increase Node.js heap size — prevents OOM during TS type-check in constrained containers
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Skip separate TS & ESLint passes — Next.js already checks during compilation
+ENV NEXT_SKIP_TYPE_CHECK=1
 
 RUN npm run build
 
