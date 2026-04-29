@@ -44,13 +44,16 @@ body {
 .main-layout {
   display: flex;
   min-height: 100vh;
+  background: var(--bg-primary);
 }
 
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
   min-width: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
 }
 
 .main-layout.sidebar-collapsed .main-content {
@@ -68,9 +71,10 @@ body {
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 16px 0;
+  z-index: 1100;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 }
 
 .sidebar-fixed.collapsed {

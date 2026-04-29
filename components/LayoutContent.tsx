@@ -7,11 +7,22 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 
 export default function LayoutContent({ children }: { children: React.ReactNode }) {
-  const { isOpen, isCollapsed, closeMobile } = useSidebar();
+  const { isOpen, isCollapsed, toggleCollapsed, closeMobile } = useSidebar();
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Determine actual display state
+  // On desktop: if it's collapsed, it can expand on hover
+  const displayCollapsed = isCollapsed && !isHovered;
 
   return (
-    <div className={`main-layout ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <Sidebar />
+    <div className={`main-layout ${displayCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <div 
+        onMouseEnter={() => isCollapsed && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{ height: '100%' }}
+      >
+        <Sidebar forceFull={isHovered} />
+      </div>
       
       {/* Mobile Overlay */}
       <div 
@@ -23,7 +34,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Suspense>
           <Navbar />
         </Suspense>
-        <main>{children}</main>
+        <main className="page-container">{children}</main>
         <Footer />
       </div>
     </div>

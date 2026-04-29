@@ -97,17 +97,19 @@ export async function getVideoById(id: string): Promise<EpornerVideo | null> {
   }
 }
 
-export function formatViews(views: number): string {
-  if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M`;
-  if (views >= 1_000) return `${(views / 1_000).toFixed(0)}K`;
-  return String(views);
+export function formatViews(views: any): string {
+  const v = Number(views) || 0;
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1_000) return `${(v / 1_000).toFixed(0)}K`;
+  return String(v);
 }
 
-export function formatDuration(seconds: number): string {
-  if (!seconds) return '00:00';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
+export function formatDuration(seconds: any): string {
+  const sTotal = Math.floor(Number(seconds)) || 0;
+  if (sTotal <= 0) return '00:00';
+  const h = Math.floor(sTotal / 3600);
+  const m = Math.floor((sTotal % 3600) / 60);
+  const s = sTotal % 60;
   
   const parts = [];
   if (h > 0) parts.push(String(h).padStart(2, '0'));
@@ -117,10 +119,11 @@ export function formatDuration(seconds: number): string {
   return parts.join(':');
 }
 
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: any): string {
+  if (!dateStr) return 'Recently';
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return '';
+    if (isNaN(d.getTime())) return 'Recently';
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch { return ''; }
+  } catch { return 'Recently'; }
 }

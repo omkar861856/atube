@@ -13,12 +13,14 @@ const navItems = [
   { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, label: 'Long', href: '/?order=longest' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ forceFull }: { forceFull?: boolean }) {
   const pathname = usePathname();
   const { isOpen, isCollapsed, closeMobile } = useSidebar();
 
+  const isActuallyCollapsed = isCollapsed && !forceFull;
+
   return (
-    <aside className={`sidebar-fixed ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`} style={{ borderRight: '1px solid var(--border)' }}>
+    <aside className={`sidebar-fixed ${isActuallyCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`} style={{ borderRight: '1px solid var(--border)' }}>
       <Link href="/" className="sidebar-logo" onClick={closeMobile} style={{ padding: '0 24px', justifyContent: 'flex-start' }}>
         <div style={{ width: '32px', height: '32px', background: 'var(--accent-gradient)', borderRadius: '6px' }} />
       </Link>
