@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useSidebar } from './SidebarContext';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
