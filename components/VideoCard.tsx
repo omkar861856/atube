@@ -102,7 +102,7 @@ export default function VideoCard({ video }: Props) {
         {isHovered && previewThumbs.length > 1 && (
           <div style={{
             position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px',
-            background: 'rgba(0,0,0,0.5)', display: 'flex', gap: '2px', padding: '0 4px', z-index: 10
+            background: 'rgba(0,0,0,0.5)', display: 'flex', gap: '2px', padding: '0 4px', zIndex: 10
           }}>
             {previewThumbs.map((_, i) => (
               <div
