@@ -16,12 +16,18 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
 
   return (
     <div className={`main-layout ${displayCollapsed ? 'sidebar-collapsed' : ''}`}>
+      {/* Sidebar Wrapper for Hover detection on Desktop */}
       <div 
+        className="sidebar-wrapper desktop-only"
         onMouseEnter={() => isCollapsed && setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        style={{ height: '100%' }}
       >
         <Sidebar forceFull={isHovered} />
+      </div>
+
+      {/* Sidebar for Mobile (No hover wrapper needed) */}
+      <div className="mobile-only" style={{ width: '100%' }}>
+        <Sidebar />
       </div>
       
       {/* Mobile Overlay */}

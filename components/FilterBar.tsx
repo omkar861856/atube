@@ -10,11 +10,11 @@ const CATEGORIES = [
 ];
 
 const SORT_OPTIONS: { label: string; value: SortOrder }[] = [
-  { label: '🆕 Latest', value: 'latest' },
-  { label: '🔥 Trending', value: 'top-weekly' },
-  { label: '💎 Popular', value: 'most-popular' },
-  { label: '⭐ Top Rated', value: 'top-rated' },
-  { label: '⏱️ Longest', value: 'longest' },
+  { label: 'Latest', value: 'latest' },
+  { label: 'Trending', value: 'top-weekly' },
+  { label: 'Popular', value: 'most-popular' },
+  { label: 'Top Rated', value: 'top-rated' },
+  { label: 'Longest', value: 'longest' },
 ];
 
 export default function FilterBar() {

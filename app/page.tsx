@@ -38,12 +38,12 @@ export default async function HomePage({ searchParams }: HomeProps) {
     : params.cat && params.cat !== 'all'
     ? params.cat.charAt(0).toUpperCase() + params.cat.slice(1)
     : order === 'top-weekly'
-    ? '🔥 Trending Now'
+    ? 'Trending Now'
     : order === 'most-popular'
-    ? '💎 Most Popular'
+    ? 'Most Popular'
     : order === 'top-rated'
-    ? '⭐ Top Rated'
-    : '🆕 Recently Added';
+    ? 'Top Rated'
+    : 'Recently Added';
 
   return (
     <div className="page-container">
@@ -65,7 +65,9 @@ export default async function HomePage({ searchParams }: HomeProps) {
 
       {data.videos.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '100px 0', opacity: 0.5 }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎬</div>
+          <div style={{ fontSize: '48px', marginBottom: '16px', color: 'var(--text-muted)' }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m15 12-8.5 6V6Z"/><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="22" y1="7" y2="7"/><line x1="2" x2="22" y1="17" y2="17"/></svg>
+          </div>
           <h3>No videos found for your request</h3>
           <p>Try exploring other categories or search terms</p>
         </div>
