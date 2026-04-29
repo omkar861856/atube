@@ -93,33 +93,47 @@ export default function ReelClient({ videos }: Props) {
 
           <div className="reel-side-actions">
             <div className="reel-action-btn" onClick={() => setIsMuted(!isMuted)}>
-              <span style={{ fontSize: '24px' }}>{isMuted ? '🔇' : '🔊'}</span>
-              <span style={{ fontSize: '10px' }}>{isMuted ? 'Muted' : 'Sound'}</span>
+              <span style={{ fontSize: '20px', display: 'flex' }}>
+                {isMuted ? (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5 6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/></svg>
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                )}
+              </span>
+              <span style={{ fontSize: '10px', fontWeight: 600 }}>{isMuted ? 'MUTED' : 'SOUND'}</span>
             </div>
             
             <div className="reel-action-btn" onClick={() => setAutoplay(!autoplay)}>
-              <span style={{ fontSize: '24px' }}>{autoplay ? '🔄' : '⏸️'}</span>
-              <span style={{ fontSize: '10px' }}>Auto</span>
+              <span style={{ fontSize: '20px', display: 'flex' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              </span>
+              <span style={{ fontSize: '10px', fontWeight: 600 }}>AUTO</span>
             </div>
 
             <Link href={`/video/${video.id}`} className="reel-action-btn" style={{ textDecoration: 'none' }}>
-              <span style={{ fontSize: '24px' }}>🎬</span>
-              <span style={{ fontSize: '10px' }}>Full</span>
+              <span style={{ fontSize: '20px', display: 'flex' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 12-8.5 6V6Z"/><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="22" y1="7" y2="7"/><line x1="2" x2="22" y1="17" y2="17"/></svg>
+              </span>
+              <span style={{ fontSize: '10px', fontWeight: 600 }}>FULL</span>
             </Link>
           </div>
 
           {/* Navigation Arrows */}
           <div className="reel-nav-controls">
             {index > 0 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)}>▲</button>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m18 15-6-6-6 6"/></svg>
+              </button>
             )}
             {index < videos.length - 1 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)}>▼</button>
+              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
             )}
           </div>
           
           <button className="reel-fullscreen-btn" onClick={toggleFullscreen}>
-            ⛶
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
           </button>
         </div>
       </section>

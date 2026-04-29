@@ -1,103 +1,79 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { EpornerVideo } from '@/lib/types';
 import { formatViews, formatDuration } from '@/lib/api';
+import Link from 'next/link';
 
 interface Props {
   video: EpornerVideo;
 }
 
 export default function VideoCard({ video }: Props) {
-  const defaultThumb = video.default_thumb?.src || video.thumbs?.[0]?.src || '';
-  const previewThumbs = video.thumbs?.length
-    ? video.thumbs.slice(0, 10).map(t => t.src)
-    : [defaultThumb];
-
-  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const indexRef = useRef(0);
-  const cardRef = useRef<HTMLAnchorElement>(null);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const previewTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const previewThumbs = video.thumbs.filter(t => t.size === 'medium');
+  const mainThumb = video.default_thumb?.src || previewThumbs[0]?.src;
 
   const startPreview = useCallback(() => {
-    if (previewThumbs.length < 2) return;
-    setIsHovered(true);
-    indexRef.current = 0;
-    setPreviewSrc(previewThumbs[0]);
-
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      indexRef.current = (indexRef.current + 1) % previewThumbs.length;
-      setPreviewSrc(previewThumbs[indexRef.current]);
-    }, 400);
+    if (previewThumbs.length <= 1) return;
+    previewTimer.current = setInterval(() => {
+      setPreviewIndex(prev => (prev + 1) % previewThumbs.length);
+    }, 800);
   }, [previewThumbs]);
 
   const stopPreview = useCallback(() => {
-    setIsHovered(false);
-    setPreviewSrc(null);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (previewTimer.current) {
+      clearInterval(previewTimer.current);
+      previewTimer.current = null;
     }
+    setPreviewIndex(0);
   }, []);
 
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              startPreview();
-            } else {
-              stopPreview();
-            }
-          });
-        },
-        { threshold: 0.6 }
-      );
-
-      if (cardRef.current) observer.observe(cardRef.current);
-      return () => observer.disconnect();
-    }
-  }, [startPreview, stopPreview]);
-
-  const activeSrc = isHovered && previewSrc ? previewSrc : defaultThumb;
+    if (isHovered) startPreview();
+    else stopPreview();
+    return () => stopPreview();
+  }, [isHovered, startPreview, stopPreview]);
 
   return (
-    <Link
+    <Link 
       href={`/video/${video.id}`}
       className="video-card"
-      id={`video-${video.id}`}
-      onMouseEnter={startPreview}
-      onMouseLeave={stopPreview}
-      ref={cardRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="video-thumb-container">
-        {activeSrc ? (
+        {mainThumb ? (
           <Image
-            src={activeSrc}
+            src={isHovered && previewThumbs[previewIndex] ? previewThumbs[previewIndex].src : mainThumb}
             alt={video.title}
             fill
-            sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, 25vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="video-thumb"
             unoptimized
           />
         ) : (
           <div style={{
-            width: '100%', height: '100%',
-            background: 'var(--bg-hover)',
+            width: '100%', height: '100%', background: '#111', 
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 32,
-          }}>🎬</div>
+            fontSize: 14, color: 'var(--text-muted)'
+          }}>No Image</div>
         )}
 
-        <span className="video-badge">{parseFloat(video.rate) >= 4.5 ? 'Premium' : 'HD'}</span>
+        <span className="video-badge" style={{ background: 'var(--accent-gradient)', color: '#000', fontWeight: 900 }}>
+          {parseFloat(video.rate) >= 4.5 ? 'PLATINUM' : 'HD'}
+        </span>
         <span className="video-duration">{formatDuration(video.length_sec)}</span>
+
+        {isHovered && previewThumbs.length > 1 && (
+          <div className="preview-indicator" style={{ position: 'absolute', top: '12px', right: '12px', color: '#fff' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+        )}
 
         {isHovered && previewThumbs.length > 1 && (
           <div style={{
@@ -108,8 +84,10 @@ export default function VideoCard({ video }: Props) {
               <div
                 key={i}
                 style={{
-                  flex: 1, height: '100%', borderRadius: '2px',
-                  background: i === indexRef.current ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+                  flex: 1,
+                  height: '100%',
+                  background: i === previewIndex ? '#fff' : 'rgba(255,255,255,0.3)',
+                  borderRadius: '2px',
                   transition: 'background 0.2s'
                 }}
               />
@@ -122,7 +100,7 @@ export default function VideoCard({ video }: Props) {
         <h3 className="video-title">{video.title}</h3>
         <div className="video-meta">
           <span>{formatViews(video.views)} views</span>
-          <span style={{ color: 'var(--accent)', fontWeight: 700 }}>★ {parseFloat(video.rate).toFixed(1)}</span>
+          <span style={{ color: 'var(--accent)' }}>★ {parseFloat(video.rate).toFixed(1)}</span>
         </div>
       </div>
     </Link>
