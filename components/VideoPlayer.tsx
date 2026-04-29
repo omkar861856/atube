@@ -5,6 +5,7 @@ import NativeBanner from './NativeBanner';
 
 interface Props {
   video: {
+    id: string;
     embed: string;
     title: string;
   };
@@ -15,26 +16,24 @@ export default function VideoPlayer({ video }: Props) {
   const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
-    // Detect when the user clicks into the iframe
-    const handleBlur = () => {
-      setHasInteracted(true);
-    };
+    // Track view via API route to avoid server-side DB issues crashing the page
+    fetch('/api/track', {
+      method: 'POST',
+      body: JSON.stringify({ videoId: video.id, title: video.title }),
+    }).catch(() => {});
 
+    const handleBlur = () => setHasInteracted(true);
     window.addEventListener('blur', handleBlur);
     return () => window.removeEventListener('blur', handleBlur);
-  }, []);
+  }, [video.id, video.title]);
 
   useEffect(() => {
-    // Detect when the user clicks back to our window (likely after interacting with the video)
     const handleFocus = () => {
       if (hasInteracted) {
-        // They were in the video, now they are back. This is a good time to show the ad
-        // as they might have paused or finished watching.
         setShowAd(true);
-        setHasInteracted(false); // Reset for next interaction
+        setHasInteracted(false);
       }
     };
-
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
   }, [hasInteracted]);
@@ -43,39 +42,35 @@ export default function VideoPlayer({ video }: Props) {
     <div 
       className="video-player-container"
       onMouseLeave={() => {
-        // Also show ad when mouse leaves the player area
-        // This covers the case where they pause and move mouse away
         if (hasInteracted) setShowAd(true);
       }}
+      style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#000', borderRadius: '16px', overflow: 'hidden' }}
     >
-      <div className="video-player-wrap">
-        <iframe
-          id="video-player"
-          src={video.embed}
-          width="100%"
-          height="100%"
-          allowFullScreen
-          scrolling="no"
-          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-          title={video.title}
-          loading="lazy"
-        />
-      </div>
+      <iframe
+        id="video-player"
+        src={`${video.embed}${video.embed.includes('?') ? '&' : '?'}autoplay=1`}
+        width="100%"
+        height="100%"
+        allowFullScreen
+        frameBorder="0"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        title={video.title}
+        loading="lazy"
+        style={{ border: 'none' }}
+      />
 
       {showAd && (
-        <div 
-          className="pause-ad-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowAd(false);
-          }}
-        >
-          <div className="pause-ad-content">
-            <button className="pause-ad-close" onClick={() => setShowAd(false)}>×</button>
-            <div className="pause-ad-label">ADVERTISEMENT</div>
-            <NativeBanner />
-            <p style={{ fontSize: 11, marginTop: 15, color: 'var(--text-secondary)' }}>
-              Video paused? Click to resume.
-            </p>
+        <div className="pause-ad-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAd(false); }}>
+          <div className="pause-ad-content" style={{ maxWidth: '360px' }}>
+            <button 
+              onClick={() => setShowAd(false)}
+              style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer' }}
+            >
+              ×
+            </button>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '15px' }}>ADVERTISEMENT</div>
+            <NativeBanner id="2020499" />
+            <p style={{ fontSize: '12px', marginTop: '15px', color: 'var(--text-secondary)' }}>Click to resume video</p>
           </div>
         </div>
       )}

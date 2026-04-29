@@ -36,10 +36,6 @@ export default async function VideoPage({ params }: Props) {
     
     video = videoData;
     relatedVideos = (relatedData?.videos || []).filter(v => v.id !== id).slice(0, 10);
-    
-    if (video) {
-      trackVideoView(video.id, video.title).catch(() => {});
-    }
   } catch (err) {
     console.error('[VideoPage] Data fetch error:', err);
   }
@@ -64,7 +60,7 @@ export default async function VideoPage({ params }: Props) {
         {/* Left: Video + info */}
         <div>
           {/* Player */}
-          <VideoPlayer video={{ embed: video.embed, title: video.title }} />
+          <VideoPlayer video={{ id: video.id, embed: video.embed, title: video.title }} />
 
           {/* Title */}
           <h1 className="video-detail-title">{video.title}</h1>

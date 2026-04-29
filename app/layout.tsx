@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AgeGate from "@/components/AgeGate";
-import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
 import FeedbackBot from "@/components/FeedbackBot";
 import Script from "next/script";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "AdultTube — Premium HD Adult Entertainment",
