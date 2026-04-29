@@ -4,7 +4,6 @@ import { SortOrder } from '@/lib/types';
 import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import FilterBar from '@/components/FilterBar';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import NativeBanner from '@/components/NativeBanner';
 import { trackPageView } from '@/lib/analytics';
 
@@ -83,7 +82,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
                 ))}
               </div>
 
-              <AdPlaceholder style={{ height: 90, margin: '28px 0' }} label="Mid-Content Advertisement — 728×90" />
+
 
               <div className="video-grid">
                 {data.videos.slice(12).map(video => (
@@ -103,7 +102,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
 
         {/* Sidebar */}
         <aside className="sidebar">
-          <AdPlaceholder style={{ height: 250 }} label="Sidebar Ad — 300×250" />
+
 
           <div className="sidebar-widget">
             <h3>🔥 Hot Searches</h3>
@@ -114,7 +113,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
             </div>
           </div>
 
-          <AdPlaceholder style={{ height: 250 }} label="Sidebar Ad — 300×250" />
+
 
           <div className="sidebar-widget">
             <h3>📊 Browse By</h3>
@@ -131,7 +130,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
             </div>
           </div>
 
-          <AdPlaceholder style={{ height: 600 }} label="Sidebar Ad — 300×600" />
+
         </aside>
       </div>
     </div>

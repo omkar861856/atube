@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getVideoById, searchVideos, formatViews, formatDate } from '@/lib/api';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { Metadata } from 'next';
 import { trackVideoView } from '@/lib/analytics';
 
@@ -44,10 +43,7 @@ export default async function VideoPage({ params }: Props) {
 
   return (
     <div>
-      {/* Top ad */}
-      <div className="page-layout" style={{ paddingBottom: 0 }}>
-        <AdPlaceholder style={{ height: 90, margin: '16px 0 0' }} label="Banner Advertisement — 728×90" />
-      </div>
+      {/* Top ad space removed */}
 
       <div className="video-page-layout">
         {/* Left: Video + info */}
@@ -92,8 +88,7 @@ export default async function VideoPage({ params }: Props) {
             <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>/ 5.00</span>
           </div>
 
-          {/* Mid-video ad */}
-          <AdPlaceholder style={{ height: 90, margin: '20px 0' }} label="In-Content Advertisement" />
+
 
           {/* Tags */}
           {tags.length > 0 && (
@@ -124,7 +119,7 @@ export default async function VideoPage({ params }: Props) {
 
         {/* Right: Related + Ads */}
         <aside>
-          <AdPlaceholder style={{ height: 250, marginBottom: 20 }} label="Sidebar Ad — 300×250" />
+
 
           <div style={{ marginBottom: 16 }}>
             <div className="section-header">
@@ -162,7 +157,7 @@ export default async function VideoPage({ params }: Props) {
             </div>
           </div>
 
-          <AdPlaceholder style={{ height: 250 }} label="Sidebar Ad — 300×250" />
+
         </aside>
       </div>
     </div>
