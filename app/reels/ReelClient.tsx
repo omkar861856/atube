@@ -9,28 +9,36 @@ interface Props {
 }
 
 export default function ReelClient({ videos }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute('data-index'));
+            setActiveIndex(index);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
 
-    const handleScroll = () => {
-      const index = Math.round(container.scrollTop / container.clientHeight);
-      if (index !== activeIndex) {
-        setActiveIndex(index);
-      }
-    };
+    const slides = document.querySelectorAll('.reel-slide');
+    slides.forEach((slide) => observerRef.current?.observe(slide));
 
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [activeIndex]);
+    return () => observerRef.current?.disconnect();
+  }, []);
 
   return (
-    <div ref={containerRef} className="reels-container">
+    <div className="reels-container">
       {videos.map((video, index) => (
-        <section key={video.id} className="reel-slide">
+        <section 
+          key={video.id} 
+          className="reel-slide" 
+          data-index={index}
+        >
           <div className="reel-video-wrapper">
             <iframe
               src={`https://www.eporner.com/embed/${video.id}/?autoplay=${activeIndex === index ? 1 : 0}`}
@@ -40,31 +48,31 @@ export default function ReelClient({ videos }: Props) {
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
-                scale: '1.5', // Zoom in to make it feel more vertical if it's horizontal
-                transform: 'translateY(10%)'
+                border: 'none'
               }}
             />
             
             <div className="reel-overlay">
               <div className="reel-info">
-                <h3>{video.title}</h3>
-                <p>🔥 {video.views.toLocaleString()} views • ⭐ {video.rate}</p>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>{video.title}</h3>
+                <p style={{ margin: '4px 0 0', opacity: 0.8, fontSize: '0.9rem' }}>
+                  🔥 {video.views.toLocaleString()} • ⭐ {video.rate}
+                </p>
               </div>
             </div>
 
             <div className="reel-actions">
               <div className="reel-action-btn">
                 <span>❤️</span>
-                <span style={{ fontSize: '10px' }}>Like</span>
+                <span style={{ fontSize: '12px' }}>Like</span>
               </div>
               <div className="reel-action-btn">
                 <span>💬</span>
-                <span style={{ fontSize: '10px' }}>99+</span>
+                <span style={{ fontSize: '12px' }}>Chat</span>
               </div>
               <Link href={`/video/${video.id}`} className="reel-action-btn" style={{ textDecoration: 'none' }}>
-                <span>🔗</span>
-                <span style={{ fontSize: '10px' }}>Full</span>
+                <span>🎬</span>
+                <span style={{ fontSize: '12px' }}>Full</span>
               </Link>
             </div>
           </div>

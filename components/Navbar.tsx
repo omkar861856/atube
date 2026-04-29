@@ -1,53 +1,66 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { FormEvent, useState, useTransition } from 'react';
+import { useSidebar } from './SidebarContext';
 
 export default function Navbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [, startTransition] = useTransition();
+  const { toggleOpen, toggleCollapsed } = useSidebar();
 
-  function handleSearch(e: FormEvent) {
+  function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
-    startTransition(() => {
-      router.push(`/?q=${encodeURIComponent(query.trim())}`);
-    });
+    router.push(`/?q=${encodeURIComponent(query.trim())}`);
   }
 
   return (
-    <nav className="navbar">
-      <div className="navbar-inner">
-        <div className="nav-search-container">
-          <form className="search-bar" onSubmit={handleSearch}>
-            <div className="search-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </div>
-            <input
-              id="search-input"
-              type="search"
-              placeholder="Search for premium adult content..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              autoComplete="off"
-            />
-          </form>
-        </div>
+    <header className="navbar-fixed">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Desktop Collapse Toggle */}
+        <button 
+          className="nav-icon-btn desktop-only" 
+          onClick={toggleCollapsed}
+          title="Toggle Sidebar"
+          style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '20px', padding: '8px' }}
+        >
+          ☰
+        </button>
+        
+        {/* Mobile Menu Toggle */}
+        <button 
+          className="nav-icon-btn mobile-only" 
+          onClick={toggleOpen}
+          style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '20px', padding: '8px' }}
+        >
+          ☰
+        </button>
 
-        <div className="nav-actions">
-          <Link href="/reels" className="category-tag active" style={{ padding: '8px 16px', fontSize: '13px' }}>
-            ✨ Watch Reels
-          </Link>
-          <button className="category-tag" style={{ border: 'none', background: 'var(--bg-hover)' }}>
-            Sign In
-          </button>
-        </div>
+        <Link href="/" className="nav-logo desktop-only" style={{ textDecoration: 'none', fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)' }}>
+          AdultTube
+        </Link>
       </div>
-    </nav>
+
+      <div className="search-container">
+        <form onSubmit={handleSearch} style={{ width: '100%' }}>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search premium videos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </form>
+      </div>
+
+      <div className="nav-actions">
+        <Link href="/reels" className="watch-reels-btn">
+          ✨ <span className="desktop-only">Watch Reels</span><span className="mobile-only">Reels</span>
+        </Link>
+      </div>
+    </header>
   );
 }

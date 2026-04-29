@@ -46,6 +46,9 @@ export const metadata: Metadata = {
 };
 
 
+import { SidebarProvider } from "@/components/SidebarContext";
+import LayoutContent from "@/components/LayoutContent";
+
 export default function RootLayout({
   children,
 }: {
@@ -76,16 +79,11 @@ export default function RootLayout({
       </head>
       <body>
         <AgeGate />
-        <div className="main-layout">
-          <Sidebar />
-          <div className="main-content">
-            <Suspense>
-              <Navbar />
-            </Suspense>
-            <main>{children}</main>
-            <Footer />
-          </div>
-        </div>
+        <SidebarProvider>
+          <LayoutContent>
+            {children}
+          </LayoutContent>
+        </SidebarProvider>
         <FeedbackBot />
 
         <Script

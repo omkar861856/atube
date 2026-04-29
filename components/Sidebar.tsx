@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSidebar } from './SidebarContext';
 
 const navItems = [
   { icon: '🏠', label: 'Home', href: '/' },
@@ -14,10 +15,11 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { isOpen, isCollapsed, closeMobile } = useSidebar();
 
   return (
-    <aside className="sidebar-fixed">
-      <Link href="/" className="sidebar-logo">
+    <aside className={`sidebar-fixed ${isCollapsed ? 'collapsed' : ''} ${isOpen ? 'open' : ''}`}>
+      <Link href="/" className="sidebar-logo" onClick={closeMobile}>
         🔥
       </Link>
       
@@ -29,18 +31,19 @@ export default function Sidebar() {
               key={item.href} 
               href={item.href} 
               className={`sidebar-link ${isActive ? 'active' : ''}`}
+              onClick={closeMobile}
             >
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
-              <span className="tooltip">{item.label}</span>
+              <span style={{ fontSize: '20px', minWidth: '24px', textAlign: 'center' }}>{item.icon}</span>
+              <span className="link-text">{item.label}</span>
             </Link>
           );
         })}
       </nav>
       
-      <div style={{ marginTop: 'auto' }}>
-        <button className="sidebar-link" title="Settings">
-          <span style={{ fontSize: '20px' }}>⚙️</span>
-          <span className="tooltip">Settings</span>
+      <div style={{ marginTop: 'auto', padding: '0 12px' }}>
+        <button className="sidebar-link" style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer' }}>
+          <span style={{ fontSize: '20px', minWidth: '24px', textAlign: 'center' }}>⚙️</span>
+          <span className="link-text">Settings</span>
         </button>
       </div>
     </aside>

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getVideoById, searchVideos, formatViews, formatDate } from '@/lib/api';
+import { getVideoById, searchVideos, formatViews, formatDate, formatDuration } from '@/lib/api';
 import { Metadata } from 'next';
 import { trackVideoView } from '@/lib/analytics';
 import NativeBanner from '@/components/NativeBanner';
@@ -17,25 +17,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!video) return { title: 'Video Not Found — AdultTube' };
   return {
     title: `${video.title} — AdultTube`,
-    description: `Watch ${video.title}. ${video.length_min} long. ${formatViews(video.views)} views. Rated ${video.rate}/5.`,
+    description: `Watch ${video.title}. ${formatDuration(video.length_sec)} long. ${formatViews(video.views)} views. Rated ${video.rate}/5.`,
     robots: { index: false, follow: false },
   };
 }
 
 export default async function VideoPage({ params }: Props) {
   const { id } = await params;
-  const [video, related] = await Promise.all([
-    getVideoById(id),
-    searchVideos({ query: 'all', per_page: 12, order: 'top-weekly', thumbsize: 'big' }),
-  ]);
+  
+  let video = null;
+  let relatedVideos = [];
+
+  try {
+    const [videoData, relatedData] = await Promise.all([
+      getVideoById(id),
+      searchVideos({ query: 'all', per_page: 12, order: 'top-weekly', thumbsize: 'big' }),
+    ]);
+    
+    video = videoData;
+    relatedVideos = (relatedData?.videos || []).filter(v => v.id !== id).slice(0, 10);
+    
+    if (video) {
+      trackVideoView(video.id, video.title).catch(() => {});
+    }
+  } catch (err) {
+    console.error('[VideoPage] Data fetch error:', err);
+  }
 
   if (!video) notFound();
 
-  // Track video view (fire-and-forget)
-  trackVideoView(video.id, video.title).catch(() => {});
-
   const ratingPercent = (parseFloat(video.rate) / 5) * 100;
-  const tags = video.keywords
+  const tags = (video.keywords || '')
     .split(',')
     .map(t => t.trim())
     .filter(Boolean)
@@ -67,7 +79,7 @@ export default async function VideoPage({ params }: Props) {
             </span>
             <span className="meta-item">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-              {video.length_min}
+              {formatDuration(video.length_sec)}
             </span>
             <span className="meta-item">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
@@ -175,7 +187,7 @@ export default async function VideoPage({ params }: Props) {
                         position: 'absolute', bottom: 4, right: 4,
                         background: 'rgba(0,0,0,0.8)', color: '#fff',
                         fontSize: 9, fontWeight: 600, padding: '1px 5px', borderRadius: 3
-                      }}>{rv.length_min}</span>
+                      }}>{formatDuration(rv.length_sec)}</span>
                       
                       {/* Quick Download */}
                       <button

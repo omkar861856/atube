@@ -8,8 +8,8 @@ export const metadata = {
 
 export default async function ReelsPage() {
   const data = await searchVideos({ 
-    query: 'tiktok pov short mobile vertical', 
-    per_page: 20, 
+    query: 'vertical mobile pov amateur', 
+    per_page: 40, 
     order: 'most-popular' 
   });
 

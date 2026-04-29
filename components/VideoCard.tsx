@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { EpornerVideo } from '@/lib/types';
-import { formatViews } from '@/lib/api';
+import { formatViews, formatDuration } from '@/lib/api';
 
 interface Props {
   video: EpornerVideo;
@@ -97,7 +97,7 @@ export default function VideoCard({ video }: Props) {
         )}
 
         <span className="video-badge">{parseFloat(video.rate) >= 4.5 ? 'Premium' : 'HD'}</span>
-        <span className="video-duration">{video.length_min}</span>
+        <span className="video-duration">{formatDuration(video.length_sec)}</span>
 
         {isHovered && previewThumbs.length > 1 && (
           <div style={{
