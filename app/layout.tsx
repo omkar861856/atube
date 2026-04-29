@@ -4,6 +4,7 @@ import AgeGate from "@/components/AgeGate";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FeedbackBot from "@/components/FeedbackBot";
+import Script from "next/script";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -21,7 +22,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function RootLayout({
   children,
 }: {
@@ -33,6 +33,18 @@ export default function RootLayout({
         {/* RTA Parental Control Label */}
         <meta name="rating" content="adult" />
         <meta name="RTA-label" content="RTA-5042-1996-1400-1577-RTA" />
+
+        {/* ── Popunder — atube.zeabur.app ── */}
+        <Script
+          src="https://developdomicile.com/a9/6d/bd/a96dbd3a07b17cb6307ddeedd9200ebd.js"
+          strategy="beforeInteractive"
+        />
+
+        {/* ── Popunder — atube.vercel.app ── */}
+        <Script
+          src="https://developdomicile.com/b9/ad/21/b9ad2171592920c6896b6f6f3ca3f63a.js"
+          strategy="beforeInteractive"
+        />
       </head>
       <body>
         <AgeGate />
@@ -42,6 +54,12 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <FeedbackBot />
+
+        {/* ── Social Bar — atube.zeabur.app (before </body>) ── */}
+        <Script
+          src="https://developdomicile.com/5f/1c/16/5f1c164a14ef480ce9978a93c500b866.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

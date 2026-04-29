@@ -5,6 +5,7 @@ import VideoCard from '@/components/VideoCard';
 import Pagination from '@/components/Pagination';
 import FilterBar from '@/components/FilterBar';
 import AdPlaceholder from '@/components/AdPlaceholder';
+import NativeBanner from '@/components/NativeBanner';
 import { trackPageView } from '@/lib/analytics';
 
 interface HomeProps {
@@ -50,8 +51,8 @@ export default async function HomePage({ searchParams }: HomeProps) {
 
   return (
     <div className="page-layout">
-      {/* Hero Ad */}
-      <AdPlaceholder style={{ height: 90, margin: '16px 0 8px' }} label="Banner Advertisement — 728×90" />
+      {/* Hero Native Banner */}
+      <NativeBanner />
 
       {/* Filter Bar */}
       <Suspense fallback={null}>
