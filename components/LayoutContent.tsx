@@ -15,7 +15,10 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const displayCollapsed = isCollapsed && !isHovered;
   const isReels = pathname === '/reels';
-
+  // We only use the special reels-main-wrapper if we are actually showing reels
+  // For the Coming Soon state, we use the standard page-container
+  const mainClass = isReels ? 'page-container' : 'page-container';
+  
   return (
     <div className={`main-layout ${displayCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Sidebar Wrapper for Hover detection on Desktop */}
@@ -42,7 +45,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Suspense>
           <Navbar />
         </Suspense>
-        <main className={`${isReels ? 'reels-main-wrapper' : 'page-container'} mb-16 lg:mb-0`}>
+        <main className={`${mainClass} mb-16 lg:mb-0`}>
           {children}
         </main>
         {!isReels && <Footer />}
