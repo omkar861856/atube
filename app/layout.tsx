@@ -5,10 +5,17 @@ import FeedbackBot from "@/components/FeedbackBot";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "AdultTube — Premium HD Adult Entertainment",
+  metadataBase: new URL('https://atube.vercel.app'),
+  title: {
+    default: "AdultTube — Premium HD Adult Entertainment",
+    template: "%s | AdultTube"
+  },
   description:
     "Experience the most modern adult platform. Watch thousands of free HD adult videos in 4K quality. Fast, sleek, and premium.",
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
     shortcut: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",

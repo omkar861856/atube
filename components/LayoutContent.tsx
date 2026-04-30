@@ -6,6 +6,7 @@ import { useSidebar } from './SidebarContext';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import MobileBottomNav from './MobileBottomNav';
 
 export default function LayoutContent({ children }: { children: React.ReactNode }) {
   const { isOpen, isCollapsed, toggleCollapsed, closeMobile } = useSidebar();
@@ -26,8 +27,8 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Sidebar forceFull={isHovered} />
       </div>
 
-      {/* Sidebar for Mobile (No hover wrapper needed) */}
-      <div className="mobile-only" style={{ width: '100%' }}>
+      {/* Sidebar for Mobile (Drawer style) */}
+      <div className="mobile-only">
         <Sidebar />
       </div>
       
@@ -41,8 +42,11 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Suspense>
           <Navbar />
         </Suspense>
-        <main className={isReels ? 'reels-main-wrapper' : 'page-container'}>{children}</main>
+        <main className={`${isReels ? 'reels-main-wrapper' : 'page-container'} mb-16 lg:mb-0`}>
+          {children}
+        </main>
         {!isReels && <Footer />}
+        <MobileBottomNav />
       </div>
     </div>
   );

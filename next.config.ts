@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // These are already handled by the IDE / CI lint step, and the standalone
   // TS pass is what causes heap OOM in memory-constrained Docker containers.
   typescript: { ignoreBuildErrors: true },
+  poweredByHeader: false,
 
   images: {
     remotePatterns: [
