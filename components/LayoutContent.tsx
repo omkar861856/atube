@@ -41,7 +41,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <Suspense>
           <Navbar />
         </Suspense>
-        <main className={isReels ? '' : 'page-container'}>{children}</main>
+        <main className={isReels ? 'reels-main-wrapper' : 'page-container'}>{children}</main>
         {!isReels && <Footer />}
       </div>
     </div>

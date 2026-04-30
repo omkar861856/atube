@@ -36,6 +36,7 @@ const ReelVideo: React.FC<ReelVideoProps> = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          console.log('Reel active:', video.id);
           setActiveTab(video.id);
           setIsPlaying(true);
         } else {
@@ -43,7 +44,7 @@ const ReelVideo: React.FC<ReelVideoProps> = ({
         }
       },
       {
-        threshold: 0.6,
+        threshold: 0.5,
         root: rootRef.current,
       }
     );
