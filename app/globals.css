@@ -294,10 +294,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  scrollbar-width: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
 }
 
-.reels-container::-webkit-scrollbar { display: none; }
+.reels-container::-webkit-scrollbar { 
+  display: none; /* Chrome, Safari and Opera */
+}
 
 .reel-slide {
   height: calc(100vh - var(--header-height));
@@ -310,6 +313,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: #000;
 }
 
 .reel-video-wrapper {
