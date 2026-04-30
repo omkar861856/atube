@@ -44,6 +44,7 @@ export const metadata: Metadata = {
 
 import { SidebarProvider } from "@/components/SidebarContext";
 import LayoutContent from "@/components/LayoutContent";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -81,6 +82,7 @@ export default function RootLayout({
           </LayoutContent>
         </SidebarProvider>
         <FeedbackBot />
+        <Analytics />
 
         <Script
           src="https://developdomicile.com/5f/1c/16/5f1c164a14ef480ce9978a93c500b866.js"
