@@ -7,13 +7,13 @@ export const metadata = {
 };
 
 export default async function ReelsPage() {
-  const data = await searchVideos({ 
-    query: 'vertical mobile pov amateur', 
-    per_page: 40, 
-    order: 'most-popular' 
+  // Fetch initial batch and filter for vertical
+  const res = await fetch(`http://localhost:3000/api/videos/search?vertical=true&count=3`, {
+    cache: 'no-store'
   });
+  const data = await res.json();
 
   return (
-    <ReelClient initialVideos={data.videos} />
+    <ReelClient initialVideos={data.videos || []} />
   );
 }

@@ -13,11 +13,10 @@ export default function ReelClient({ initialVideos }: Props) {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<string>(initialVideos[0]?.id || "");
   const [isMuted, setIsMuted] = useState(true);
   
   const containerRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const fetchMoreVideos = useCallback(async () => {
@@ -26,7 +25,7 @@ export default function ReelClient({ initialVideos }: Props) {
     setLoading(true);
     try {
       const nextPage = page + 1;
-      const res = await fetch(`/api/videos/search?page=${nextPage}&per_page=20&query=vertical mobile pov amateur`);
+      const res = await fetch(`/api/videos/search?vertical=true&count=3&page=${nextPage}`);
       const data = await res.json();
       
       if (data.videos && data.videos.length > 0) {
@@ -42,42 +41,18 @@ export default function ReelClient({ initialVideos }: Props) {
     }
   }, [page, loading, hasMore]);
 
+  // Infinite scroll trigger: when user scrolls on the second reel of the batch - load the next 3
   useEffect(() => {
-    // Observer for active video
-    const videoObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = Number(entry.target.getAttribute('data-index'));
-            setActiveIndex(index);
-          }
-        });
-      },
-      { threshold: 0.8 }
-    );
-
-    const slides = document.querySelectorAll('.reel-item-container');
-    slides.forEach((slide) => videoObserver.observe(slide));
-
-    // Observer for infinite scroll
-    const scrollObserver = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchMoreVideos();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (loadMoreRef.current) {
-      scrollObserver.observe(loadMoreRef.current);
+    const currentIndex = videos.findIndex(v => v.id === activeTab);
+    
+    // Trigger if we are on the 2nd reel of the current batch
+    // Batch 1: index 1 triggers
+    // Batch 2: index 4 triggers
+    // ... and so on
+    if (currentIndex !== -1 && currentIndex % 3 === 1 && currentIndex > (page - 1) * 3 - 2) {
+      fetchMoreVideos();
     }
-
-    return () => {
-      videoObserver.disconnect();
-      scrollObserver.disconnect();
-    };
-  }, [videos, fetchMoreVideos]);
+  }, [activeTab, videos, page, fetchMoreVideos]);
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
@@ -86,31 +61,31 @@ export default function ReelClient({ initialVideos }: Props) {
   return (
     <div 
       ref={containerRef}
-      className="snap-y snap-mandatory h-[calc(100vh-var(--header-height))] overflow-y-scroll scroll-smooth bg-black scrollbar-hide"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      id="snap_container"
+      className="snap snap-y snap-mandatory h-[calc(100vh-var(--header-height))] overflow-y-scroll scroll-smooth bg-black scrollbar-hide"
     >
       {videos.map((video, index) => (
         <div 
           key={`${video.id}-${index}`} 
-          data-index={index}
-          className="reel-item-container snap-always snap-center mx-auto w-full h-[80vh] my-[10vh] flex items-center justify-center"
+          className="snap-always snap-center mx-auto rounded-lg w-full h-[80vh] my-[8vh] flex items-center justify-center"
         >
           <div className="w-full h-full max-w-[450px]">
             <ReelVideo 
               video={video} 
-              isActive={activeIndex === index}
+              isActive={video.id === activeTab}
+              setActiveTab={setActiveTab}
+              rootRef={containerRef}
               isMuted={isMuted}
               onToggleMute={toggleMute}
-              index={index}
             />
           </div>
         </div>
       ))}
       
       {/* Infinite Scroll Trigger */}
-      <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
+      <div ref={loadMoreRef} className="h-40 flex items-center justify-center w-full">
         {loading && (
-          <div className="w-8 h-8 border-4 border-silver/30 border-t-silver rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
         )}
       </div>
     </div>
