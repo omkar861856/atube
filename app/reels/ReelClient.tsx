@@ -1,23 +1,50 @@
 'use client';
 
 import { EpornerVideo } from '@/lib/types';
-import Link from 'next/link';
-import { useRef, useState, useEffect } from 'react';
-import NativeBanner from '@/components/NativeBanner';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import ReelVideo from './ReelVideo';
 
 interface Props {
-  videos: EpornerVideo[];
+  initialVideos: EpornerVideo[];
 }
 
-export default function ReelClient({ videos }: Props) {
+export default function ReelClient({ initialVideos }: Props) {
+  const [videos, setVideos] = useState<EpornerVideo[]>(initialVideos);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
-  const [autoplay, setAutoplay] = useState(true);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const fetchMoreVideos = useCallback(async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const res = await fetch(`/api/videos/search?page=${nextPage}&per_page=20&query=vertical mobile pov amateur`);
+      const data = await res.json();
+      
+      if (data.videos && data.videos.length > 0) {
+        setVideos((prev) => [...prev, ...data.videos]);
+        setPage(nextPage);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching more videos:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, loading, hasMore]);
 
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(
+    // Observer for active video
+    const videoObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -26,127 +53,66 @@ export default function ReelClient({ videos }: Props) {
           }
         });
       },
-      { threshold: 0.7 }
+      { threshold: 0.8 }
     );
 
-    const slides = document.querySelectorAll('.reel-slide');
-    slides.forEach((slide) => observerRef.current?.observe(slide));
+    const slides = document.querySelectorAll('.reel-item-container');
+    slides.forEach((slide) => videoObserver.observe(slide));
 
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  const scrollTo = (index: number) => {
-    const slides = document.querySelectorAll('.reel-slide');
-    if (slides[index]) {
-      slides[index].scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
-  // Helper to render a video or an ad
-  const renderItem = (video: EpornerVideo, index: number) => {
-    const isAd = (index + 1) % 6 === 0;
-
-    if (isAd) {
-      return (
-        <section key={`ad-${index}`} className="reel-slide" data-index={index}>
-          <div className="reel-video-wrapper ad-slide" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', padding: '20px' }}>
-            <div style={{ marginBottom: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>SPONSORED ADVERTISEMENT</div>
-            <NativeBanner id="2020499" />
-            <button 
-              onClick={() => scrollTo(index + 1)}
-              style={{ marginTop: '40px', padding: '12px 24px', borderRadius: '30px', background: 'var(--accent)', border: 'none', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
-            >
-              Continue Watching →
-            </button>
-          </div>
-        </section>
-      );
-    }
-
-    return (
-      <section key={video.id} className="reel-slide" data-index={index}>
-        <div className="reel-video-wrapper">
-          {/* SAFE ZONE: Important content is centered. Top 250px and bottom 450px avoided for critical UI */}
-          <iframe
-            key={`reel-${video.id}-${isMuted ? 'muted' : 'unmuted'}-${activeIndex === index ? 'active' : 'inactive'}`}
-            src={`https://www.eporner.com/embed/${video.id}/?autoplay=${(autoplay && activeIndex === index) ? 1 : 0}&muted=${isMuted ? 1 : 0}`}
-            className="reel-video"
-            allow="autoplay; fullscreen"
-            frameBorder="0"
-            style={{ width: '100%', height: '100%', border: 'none' }}
-          />
-          
-          <div className="reel-overlay">
-            <div className="reel-info">
-              {/* SAFE ZONE: Title is at least 450px from bottom */}
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, textShadow: '0 2px 10px rgba(0,0,0,0.8)', letterSpacing: '-0.5px' }}>{video.title}</h3>
-              <p style={{ margin: '8px 0 0', opacity: 0.9, fontSize: '0.9rem', fontWeight: 600 }}>
-                🔥 {video.views.toLocaleString()} • ⭐ {video.rate}
-              </p>
-            </div>
-          </div>
-
-          <div className="reel-side-actions">
-            {/* SAFE ZONE: Action buttons are at least 480px from bottom */}
-            <div className="reel-action-btn" onClick={() => setIsMuted(!isMuted)}>
-              <span style={{ fontSize: '24px', display: 'flex' }}>
-                {isMuted ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 5 6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/></svg>
-                ) : (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 5 6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                )}
-              </span>
-              <span style={{ fontSize: '10px', fontWeight: 800 }}>{isMuted ? 'OFF' : 'ON'}</span>
-            </div>
-            
-            <div className="reel-action-btn" onClick={() => setAutoplay(!autoplay)}>
-              <span style={{ fontSize: '24px', display: 'flex' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-              </span>
-              <span style={{ fontSize: '10px', fontWeight: 800 }}>{autoplay ? 'AUTO' : 'MANUAL'}</span>
-            </div>
-
-            <Link href={`/video/${video.id}`} className="reel-action-btn" style={{ textDecoration: 'none' }}>
-              <span style={{ fontSize: '24px', display: 'flex' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect width="20" height="20" x="2" y="2" rx="2"/><path d="m15 12-8.5 6V6Z"/></svg>
-              </span>
-              <span style={{ fontSize: '10px', fontWeight: 800 }}>FULL</span>
-            </Link>
-          </div>
-
-          {/* Navigation Arrows - Moved to be more prominent */}
-          <div className="reel-nav-controls">
-            {index > 0 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index - 1)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m18 15-6-6-6 6"/></svg>
-              </button>
-            )}
-            {index < videos.length - 1 && (
-              <button className="reel-nav-btn" onClick={() => scrollTo(index + 1)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-            )}
-          </div>
-          
-          <button className="reel-fullscreen-btn" onClick={toggleFullscreen}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-          </button>
-        </div>
-      </section>
+    // Observer for infinite scroll
+    const scrollObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchMoreVideos();
+        }
+      },
+      { threshold: 0.1 }
     );
+
+    if (loadMoreRef.current) {
+      scrollObserver.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      videoObserver.disconnect();
+      scrollObserver.disconnect();
+    };
+  }, [videos, fetchMoreVideos]);
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
   };
 
   return (
-    <div ref={containerRef} className="reels-container">
-      {videos.map((video, index) => renderItem(video, index))}
+    <div 
+      ref={containerRef}
+      className="snap-y snap-mandatory h-[calc(100vh-var(--header-height))] overflow-y-scroll scroll-smooth bg-black scrollbar-hide"
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+    >
+      {videos.map((video, index) => (
+        <div 
+          key={`${video.id}-${index}`} 
+          data-index={index}
+          className="reel-item-container snap-always snap-center mx-auto w-full h-[80vh] my-[10vh] flex items-center justify-center"
+        >
+          <div className="w-full h-full max-w-[450px]">
+            <ReelVideo 
+              video={video} 
+              isActive={activeIndex === index}
+              isMuted={isMuted}
+              onToggleMute={toggleMute}
+              index={index}
+            />
+          </div>
+        </div>
+      ))}
+      
+      {/* Infinite Scroll Trigger */}
+      <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
+        {loading && (
+          <div className="w-8 h-8 border-4 border-silver/30 border-t-silver rounded-full animate-spin"></div>
+        )}
+      </div>
     </div>
   );
 }
